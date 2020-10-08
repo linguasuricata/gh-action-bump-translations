@@ -1,0 +1,25 @@
+{
+  "name": "gh-action-bump-translations",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/linguasuricata/gh-action-bump-translations.git"
+  },
+  "author": {
+    "name": "Surikaterna"
+  },
+  "bugs": {
+    "url": "https://github.com/linguasuricata/gh-action-bump-translations/issues"
+  },
+  "homepage": "https://github.com/linguasuricata/gh-action-bump-translations#readme",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./index.js"
+  },
+  "dependencies": {
+    "actions-toolkit": "^6.0.1",
+    "isomorphic-git": "^1.7.8",
+    "shelljs": "^0.8.4"
+  }
+}

@@ -1,0 +1,5 @@
+name: Translations Version Bump
+description: Bump translations version in develop on server and client when translations are updated.
+runs:
+  using: node12
+  main: index.js
