@@ -19,7 +19,8 @@ const gitData = {
 };
 
 Toolkit.run(async tools => {
-  const { name, version } = tools.getPackageJSON();
+  const name = '@surikat/lx-translations';
+  const version = 'latest';
 
   updateOnGitHub(name, version);
 });
