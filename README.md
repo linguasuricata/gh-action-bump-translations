@@ -18,5 +18,6 @@ Bump @surikat/lx-translations version in develop for the client and server every
   uses: linguasuricata/gh-action-bump-translations
   env:
     USERNAME: ${{ secrets.USERNAME }}
-    PASSWORD: ${{ secrets.ACCESS_TOKEN }}
+    ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+    NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
