@@ -19,5 +19,6 @@ Bump @surikat/lx-translations version in develop for the client and server every
   env:
     USERNAME: ${{ secrets.USERNAME }}
     ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-    NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    REF: "develop"
 ```

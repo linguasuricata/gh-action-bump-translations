@@ -20,6 +20,7 @@
   "dependencies": {
     "actions-toolkit": "^6.0.1",
     "isomorphic-git": "^1.7.8",
+    "npm": "^6.14.8",
     "shelljs": "^0.8.4"
   }
 }
