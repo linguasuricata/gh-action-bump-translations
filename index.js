@@ -137,8 +137,9 @@ async function updateFile(fileName, translationDepData) {
     if (error) {
       console.error(error);
     }
-    data.dependencies[translationsRepoName] = translationDepData;
-    return fs.writeFile(fileName, JSON.stringify(data, null, 2));
+    const parsedData = JSON.parse(data);
+    parsedData.dependencies[translationsRepoName] = translationDepData;
+    return fs.writeFile(fileName, JSON.stringify(parsedData, null, 2));
   });
 }
 
