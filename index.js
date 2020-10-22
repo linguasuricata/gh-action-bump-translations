@@ -75,6 +75,11 @@ const data = {
   }
 };
 
+const fileNames = {
+  package: 'package.json',
+  packageLock: 'package-lock.json'
+};
+
 const initRepoWithTranslations = () => {
   return new Promise((resolve, reject) => {
     const { tempRepoPath } = data;
@@ -87,22 +92,20 @@ const initRepoWithTranslations = () => {
         return reject(error);
       }
       npm.commands.init(() => {
-        npm.commands.install([translationsRepoName], error => {
+        npm.commands.install([translationsRepoName], async error => {
           if (error) {
             console.error(error);
             return reject(error);
           }
           console.log(`Successfully installed ${translationsRepoName}`);
 
-          const packageJson = fs.readFileSync('package.json');
-          const package = JSON.parse(packageJson).dependencies[translationsRepoName];
-
-          const packageLockJson = fs.readFileSync('package-lock.json');
-          const packageLock = JSON.parse(packageLockJson).dependencies[translationsRepoName];
+          const package = fs.readFile(fileNames.package);
+          const packageLock = fs.readFile(fileNames.packageLock);
+          await Promise.all([package, packageLock]);
 
           data.translationDep = {
-            package,
-            packageLock
+            package: JSON.parse(package).dependencies[translationsRepoName],
+            packageLock: JSON.parse(packageLock).dependencies[translationsRepoName]
           };
 
           shell.cd('..');
@@ -113,6 +116,16 @@ const initRepoWithTranslations = () => {
   });
 };
 
+async function updateFile(fileName, translationDepData) {
+  fs.readFile(fileName, (error, data) => {
+    if (error) {
+      console.error(error);
+    }
+    data.dependencies[translationsRepoName] = translationDepData;
+    return fs.writeFile(fileName, JSON.stringify(data, null, 2));
+  });
+}
+
 const updatePackageVersion = (dir) => new Promise((resolve, reject) => {
   shell.cd(dir);
   console.log('Changed directory to %s.', dir);
@@ -122,18 +135,10 @@ const updatePackageVersion = (dir) => new Promise((resolve, reject) => {
       console.error(err);
       return reject(err);
     }
-
-    const packageJson = fs.readFileSync('package.json');
-    const package = JSON.parse(packageJson);
-    package.dependencies[translationsRepoName] = data.translationDep.package;
-    fs.writeFileSync('package.json', JSON.stringify(package, null, 2));
-
-    const packageLockJson = fs.readFileSync('package-lock.json');
-    const packageLock = JSON.parse(packageLockJson);
-    packageLock.dependencies[translationsRepoName] = data.translationDep.packageLock;
-    fs.writeFileSync('package-lock.json', JSON.stringify(packageLock, null, 2));
-
-    resolve();
+    Promise.all([
+      updateFile(fileNames.package, data.translationDep.package),
+      updateFile(fileNames.packageLock, data.translationDep.packageLock)
+    ]).then(resolve);
   });
 });
 
