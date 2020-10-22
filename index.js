@@ -116,16 +116,6 @@ const initRepoWithTranslations = () => {
   });
 };
 
-async function updateFile(fileName, translationDepData) {
-  fs.readFile(fileName, (error, data) => {
-    if (error) {
-      console.error(error);
-    }
-    data.dependencies[translationsRepoName] = translationDepData;
-    return fs.writeFile(fileName, JSON.stringify(data, null, 2));
-  });
-}
-
 const updatePackageVersion = (dir) => new Promise((resolve, reject) => {
   shell.cd(dir);
   console.log('Changed directory to %s.', dir);
@@ -141,6 +131,16 @@ const updatePackageVersion = (dir) => new Promise((resolve, reject) => {
     ]).then(resolve);
   });
 });
+
+async function updateFile(fileName, translationDepData) {
+  fs.readFile(fileName, (error, data) => {
+    if (error) {
+      console.error(error);
+    }
+    data.dependencies[translationsRepoName] = translationDepData;
+    return fs.writeFile(fileName, JSON.stringify(data, null, 2));
+  });
+}
 
 async function gitAddAll(dir) {
   const repo = {
