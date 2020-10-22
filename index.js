@@ -126,12 +126,12 @@ const updatePackageVersion = (dir) => new Promise((resolve, reject) => {
     const packageJson = fs.readFileSync('package.json');
     const package = JSON.parse(packageJson);
     package.dependencies[translationsRepoName] = data.translationDep.package;
-    fs.writeFileSync('package.json', JSON.stringify(package));
+    fs.writeFileSync('package.json', JSON.stringify(package, null, 2));
 
     const packageLockJson = fs.readFileSync('package-lock.json');
     const packageLock = JSON.parse(packageLockJson);
     packageLock.dependencies[translationsRepoName] = data.translationDep.packageLock;
-    fs.writeFileSync('package-lock.json', JSON.stringify(packageLock));
+    fs.writeFileSync('package-lock.json', JSON.stringify(packageLock, null, 2));
 
     resolve();
   });
