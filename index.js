@@ -11,6 +11,8 @@ const repos = [
   'lx-react-client'
 ];
 
+const translationsRepoName = '@surikat/lx-translations';
+
 const gitData = {
   repos,
   username: process.env.USERNAME,
@@ -21,10 +23,7 @@ const gitData = {
 };
 
 const runCallback = async (_tools) => {
-  const name = '@surikat/lx-translations';
-  const version = 'latest';
-
-  updateOnGitHub(name, version);
+  updateOnGitHub();
 };
 
 const runOptions = {
@@ -33,7 +32,7 @@ const runOptions = {
 
 Toolkit.run(runCallback, runOptions);
 
-function updateOnGitHub(name = '@surikat/lx-translations', version = 'latest') {
+function updateOnGitHub() {
   gitData.repos.forEach(async repo => {
     const url = `https://github.com/surikaterna/${repo}`;
     const ref = gitData.ref;
@@ -42,7 +41,8 @@ function updateOnGitHub(name = '@surikat/lx-translations', version = 'latest') {
     try {
       await gitClone(url, ref, dir);
       console.log('Cloned %s branch of %s.', ref, url);
-      await updatePackageVersion(name, version, dir);
+      await initRepoWithTranslations();
+      await updatePackageVersion(dir);
       await gitAddAll(dir);
       await gitCommit(dir);
       await gitPush(ref, dir);
@@ -67,25 +67,73 @@ async function gitClone(url, ref, dir) {
   });
 }
 
-const updatePackageVersion = (name, version, dir) => new Promise((resolve, reject) => {
+const data = {
+  tempRepoPath: 'translations-repo',
+  translationDep: {
+    package: {},
+    packageLock: {}
+  }
+};
+
+const initRepoWithTranslations = () => {
+  return new Promise((resolve, reject) => {
+    const { tempRepoPath } = data;
+
+    shell.mkdir(tempRepoPath);
+    shell.cd(tempRepoPath);
+    npm.load({}, error => {
+      if (error) {
+        console.error(error);
+        return reject(error);
+      }
+      npm.commands.init(() => {
+        npm.commands.install([translationsRepoName], error => {
+          if (error) {
+            console.error(error);
+            return reject(error);
+          }
+          console.log(`Successfully installed ${translationsRepoName}`);
+
+          const packageJson = fs.readFileSync('package.json');
+          const package = JSON.parse(packageJson).dependencies[translationsRepoName];
+
+          const packageLockJson = fs.readFileSync('package-lock.json');
+          const packageLock = JSON.parse(packageLockJson).dependencies[translationsRepoName];
+
+          data.translationDep = {
+            package,
+            packageLock
+          };
+
+          shell.cd('..');
+          resolve();
+        });
+      });
+    });
+  });
+};
+
+const updatePackageVersion = (dir) => new Promise((resolve, reject) => {
   shell.cd(dir);
   console.log('Changed directory to %s.', dir);
+
   npm.load({ save: true }, err => {
     if (err) {
       console.error(err);
       return reject(err);
     }
 
-    const translationDep = `${name}@${version}`;
-    npm.commands.install([translationDep], (err, _data) => {
-      if (err) {
-        console.error(err);
-        return reject(err);
-      }
+    const packageJson = fs.readFileSync('package.json');
+    const package = JSON.parse(packageJson);
+    package.dependencies[translationsRepoName] = data.translationDep.package;
+    fs.writeFileSync('package.json', JSON.stringify(package));
 
-      console.log(`Successfully installed ${translationDep}`);
-      return resolve();
-    });
+    const packageLockJson = fs.readFileSync('package-lock.json');
+    const packageLock = JSON.parse(packageLockJson);
+    packageLock.dependencies[translationsRepoName] = data.translationDep.packageLock;
+    fs.writeFileSync('package-lock.json', JSON.stringify(packageLock));
+
+    resolve();
   });
 });
 
