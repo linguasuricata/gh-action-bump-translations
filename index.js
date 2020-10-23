@@ -91,7 +91,7 @@ const initRepoWithTranslations = () => {
         console.error(error);
         return reject(error);
       }
-      npm.commands.init(() => {
+      npm.commands.init(['-y'], () => {
         npm.commands.install([translationsRepoName], async error => {
           if (error) {
             console.error(error);
