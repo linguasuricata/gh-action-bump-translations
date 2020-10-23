@@ -86,7 +86,7 @@ const initRepoWithTranslations = () => {
 
     shell.mkdir(tempRepoPath);
     shell.cd(tempRepoPath);
-    npm.load({}, error => {
+    npm.load({ save: true }, error => {
       if (error) {
         console.error(error);
         return reject(error);
