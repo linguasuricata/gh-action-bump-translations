@@ -99,8 +99,8 @@ const initRepoWithTranslations = () => {
           }
           console.log(`Successfully installed ${translationsRepoName}`);
 
-          const package = fs.readFile(fileNames.package);
-          const packageLock = fs.readFile(fileNames.packageLock);
+          const package = getFile(fileNames.package);
+          const packageLock = getFile(fileNames.packageLock);
           await Promise.all([package, packageLock]);
 
           data.translationDep = {
@@ -132,14 +132,35 @@ const updatePackageVersion = (dir) => new Promise((resolve, reject) => {
   });
 });
 
-async function updateFile(fileName, translationDepData) {
-  fs.readFile(fileName, (error, data) => {
-    if (error) {
+function getFile(fileName) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(fileName, (error, data) => {
+      if (error) {
+        console.error(error);
+        return reject(error);
+      }
+      resolve(data);
+    });
+  });
+};
+
+function updateFile(fileName, translationDepData) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const data = await getFile(fileName);
+      const parsedData = JSON.parse(data);
+      parsedData.dependencies[translationsRepoName] = translationDepData;
+
+      fs.writeFile(fileName, JSON.stringify(parsedData, null, 2), error => {
+        if (error) {
+          return reject(error);
+        }
+        resolve();
+      });
+    } catch (error) {
       console.error(error);
+      reject(error);
     }
-    const parsedData = JSON.parse(data);
-    parsedData.dependencies[translationsRepoName] = translationDepData;
-    return fs.writeFile(fileName, JSON.stringify(parsedData, null, 2));
   });
 }
 
