@@ -2,9 +2,11 @@ const { Toolkit } = require('actions-toolkit');
 const fs = require('fs');
 const git = require('isomorphic-git');
 const http = require('isomorphic-git/http/node');
+const init = require('init-package-json');
 const npm = require('npm');
 const path = require('path');
 const shell = require('shelljs');
+const { cwd } = require('process');
 
 const repos = [
   'lx-api-server',
@@ -85,13 +87,16 @@ const initRepoWithTranslations = () => {
     const { tempRepoPath } = data;
 
     shell.mkdir(tempRepoPath);
-    shell.cd(tempRepoPath);
-    npm.load({ save: true }, error => {
-      if (error) {
-        console.error(error);
-        return reject(error);
-      }
-      npm.commands.init(['-y'], () => {
+    const absPath = path.resolve(cwd(), tempRepoPath);
+    const initFile = path.resolve(process.env.HOME, '.npm-init');
+    init(absPath, initFile, {}, (err, data) => {
+      shell.cd(tempRepoPath);
+      npm.load({ save: true }, error => {
+        if (error) {
+          console.error(error);
+          return reject(error);
+        }
+
         npm.commands.install([translationsRepoName], async error => {
           if (error) {
             console.error(error);
@@ -113,6 +118,7 @@ const initRepoWithTranslations = () => {
         });
       });
     });
+
   });
 };
 
