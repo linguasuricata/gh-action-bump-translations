@@ -86,17 +86,25 @@ const initRepoWithTranslations = () => {
   return new Promise((resolve, reject) => {
     const { tempRepoPath } = data;
 
-    shell.mkdir(tempRepoPath);
+    console.log('initRepoWithTranslations');
     const absPath = path.resolve(cwd(), tempRepoPath);
+    console.log('absPath', absPath);
     const initFile = path.resolve(process.env.HOME, '.npm-init');
+    console.log('initFile', initFile);
     init(absPath, initFile, {}, (err, data) => {
+      console.log('init', err, data);
+      
+      console.log('will cd', tempRepoPath);
       shell.cd(tempRepoPath);
+      console.log('did cd, will load');
       npm.load({ save: true }, error => {
+        console.log('load cb', error);
         if (error) {
           console.error(error);
           return reject(error);
         }
 
+        console.log('will install');
         npm.commands.install([translationsRepoName], async error => {
           if (error) {
             console.error(error);
@@ -116,6 +124,7 @@ const initRepoWithTranslations = () => {
           shell.cd('..');
           resolve();
         });
+        console.log('something');
       });
     });
 
