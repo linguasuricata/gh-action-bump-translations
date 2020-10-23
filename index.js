@@ -99,9 +99,9 @@ const initRepoWithTranslations = () => {
           }
           console.log(`Successfully installed ${translationsRepoName}`);
 
-          const package = getFile(fileNames.package);
-          const packageLock = getFile(fileNames.packageLock);
-          await Promise.all([package, packageLock]);
+          const packagePromise = getFile(fileNames.package);
+          const packageLockPromise = getFile(fileNames.packageLock);
+          const [package, packageLock] = await Promise.all([packagePromise, packageLockPromise]);
 
           data.translationDep = {
             package: JSON.parse(package).dependencies[translationsRepoName],
@@ -132,17 +132,15 @@ const updatePackageVersion = (dir) => new Promise((resolve, reject) => {
   });
 });
 
-function getFile(fileName) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(fileName, (error, data) => {
-      if (error) {
-        console.error(error);
-        return reject(error);
-      }
-      resolve(data);
-    });
+const getFile = fileName => new Promise((resolve, reject) => {
+  fs.readFile(fileName, (error, data) => {
+    if (error) {
+      console.error(error);
+      return reject(error);
+    }
+    resolve(data);
   });
-};
+});
 
 function updateFile(fileName, translationDepData) {
   return new Promise(async (resolve, reject) => {
