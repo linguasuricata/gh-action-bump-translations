@@ -7,7 +7,7 @@ const path = require('path');
 const shell = require('shelljs');
 const { cwd } = require('process');
 
-const initCWD = null;
+let initCWD = null;
 
 const repos = [
   'lx-api-server',
