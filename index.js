@@ -98,16 +98,16 @@ const initRepoWithTranslations = () => {
     console.log('initFile', initFile);
 
     const res = shell.exec('npm init -y');
-    console.log('Exec result: ', res);
-    const res2 = shell.exec('npm install');
-    console.log('Exec result 2: ', res);
+    // const res2 = shell.exec('npm install');
+    // console.log('Exec result 2: ', res2);
 
     console.log('will cd', tempRepoPath);
     shell.cd(tempRepoPath);
     console.log('did cd, will load');
+
     npm.load({ save: true }, error => {
-      console.log('load cb', error);
       if (error) {
+        console.log('load cb error: ', error);
         console.error(error);
         return reject(error);
       }
