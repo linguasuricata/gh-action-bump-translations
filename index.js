@@ -35,7 +35,7 @@ const runOptions = {
 
 Toolkit.run(runCallback, runOptions);
 
-function updateOnGitHub() {
+async function updateOnGitHub() {
   for (const repo of gitData.repos) {
     const url = `https://github.com/surikaterna/${repo}`;
     const ref = gitData.ref;
