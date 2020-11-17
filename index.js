@@ -36,20 +36,15 @@ const runOptions = {
 Toolkit.run(runCallback, runOptions);
 
 function updateOnGitHub() {
-  gitData.repos.forEach(async repo => {
+  for (const repo of gitData.repos) {
     const url = `https://github.com/surikaterna/${repo}`;
     const ref = gitData.ref;
     const dir = gitData.dir;
 
     try {
       console.log('#1 Current location: ', cwd());
-      if (initCWD) {
-        console.log('*** CWD: ', initCWD);
-        shell.cd(initCWD);
-        console.log('#1.1 Current location: ', cwd());
-      } else {
-        initCWD = cwd();
-      }
+      const p = path.resolve(dir, 'work/lx-translations');
+      shell.cd(p);
       console.log('#2 Current location: ', cwd());
       await gitClone(url, ref, dir);
       console.log('Cloned %s branch of %s.', ref, url);
