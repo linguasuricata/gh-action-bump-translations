@@ -100,7 +100,7 @@ const initRepoWithTranslations = () => {
       shell.exec(`npm config set '//registry.npmjs.org/:_authToken' "${process.env.NPM_TOKEN}"`);
       shell.exec('npm install @surikat/lx-translations --save');
 
-      console.log('Current location: ', cwd());
+      console.log('#1 Current location: ', cwd());
 
       const packagePromise = getFile(fileNames.package);
       const packageLockPromise = getFile(fileNames.packageLock);
@@ -114,7 +114,7 @@ const initRepoWithTranslations = () => {
         packageLock: parsedPackageLock.dependencies[translationsRepoName]
       };
 
-      console.log('DATA: ', JSON.stringify(data), null, 2);
+      console.log('DATA: ', JSON.stringify(data, null, 2));
 
       shell.cd('..');
       resolve();
@@ -128,6 +128,7 @@ const initRepoWithTranslations = () => {
 const updatePackageVersion = (dir) => new Promise((resolve, reject) => {
   // shell.cd(dir);
   // console.log('Changed directory to %s.', dir);
+  console.log('#2 Current location: ', cwd());
 
   npm.load({ save: true }, err => {
     if (err) {
