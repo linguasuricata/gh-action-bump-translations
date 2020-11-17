@@ -97,9 +97,9 @@ const initRepoWithTranslations = () => {
     const initFile = path.resolve(cwd(), '.npm-init');
     console.log('initFile', initFile);
 
-    const res = shell.exec('npm init -y');
-    // const res2 = shell.exec('npm install');
-    // console.log('Exec result 2: ', res2);
+    shell.exec('npm init -y');
+    const res = shell.exec('npm install');
+    console.log('Exec install result: ', res);
 
     console.log('will cd', tempRepoPath);
     shell.cd(tempRepoPath);
