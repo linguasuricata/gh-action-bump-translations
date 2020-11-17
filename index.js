@@ -103,7 +103,7 @@ const initRepoWithTranslations = () => {
       const packageLockPromise = getFile(fileNames.packageLock);
       const [package, packageLock] = await Promise.all([packagePromise, packageLockPromise]);
 
-      console.log('Package Files: ', JSON.stringify({ package, packageLock }, null, 2));
+      console.log('Package Files: ', package, packageLock);
 
       data.translationDep = {
         package: JSON.parse(package).dependencies[translationsRepoName],
@@ -170,7 +170,7 @@ const updatePackageVersion = (dir) => new Promise((resolve, reject) => {
 const getFile = fileName => new Promise((resolve, reject) => {
   fs.readFile(fileName, (error, data) => {
     if (error) {
-      console.error(error);
+      console.error('getFile Error: ', error. message);
       return reject(error);
     }
     resolve(data);
