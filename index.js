@@ -38,7 +38,7 @@ function updateOnGitHub() {
   gitData.repos.forEach(async repo => {
     const url = `https://github.com/surikaterna/${repo}`;
     const ref = gitData.ref;
-    const dir = path.join(gitData.dir, repo);
+    const dir = gitData.dir;
 
     try {
       await gitClone(url, ref, dir);
@@ -89,8 +89,9 @@ const initRepoWithTranslations = () => {
     console.log('initRepoWithTranslations');
     const absPath = path.resolve(cwd(), tempRepoPath);
     console.log('absPath', absPath);
-    const initFile = path.resolve(process.env.HOME, '.npm-init');
+    const initFile = path.resolve(absPath, '.npm-init');
     console.log('initFile', initFile);
+
     init(absPath, initFile, {}, (err, data) => {
       console.log('init', err, data);
       
