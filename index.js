@@ -88,14 +88,17 @@ const initRepoWithTranslations = () => {
 
     console.log('initRepoWithTranslations');
     shell.cd('..');
+
     const absPath = path.resolve(cwd(), tempRepoPath);
     console.log('absPath', absPath);
     shell.mkdir(absPath);
     shell.cd(absPath);
+
     const initFile = path.resolve(cwd(), '.npm-init');
     console.log('initFile', initFile);
-    console.log('shell ls: ', shell.ls());
-    console.log('--------------------');
+    
+    const res = shell.exec('npm init -y');
+    console.log('-------------------- ', res);
 
     init(cwd(), initFile, (err, data) => {
       console.log('init', err, data);
