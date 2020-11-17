@@ -94,18 +94,34 @@ const initRepoWithTranslations = () => {
     shell.mkdir(absPath);
     shell.cd(absPath);
 
-    const initFile = path.resolve(cwd(), '.npm-init');
-    console.log('initFile', initFile);
+    // const initFile = path.resolve(cwd(), '.npm-init');
+    // console.log('initFile', initFile);
 
     shell.exec('npm init -y');
-    const res = shell.exec('npm install');
-    console.log('Exec install result: ', res);
+    shell.exec('npm install');
+    console.log('Current location: ', cwd());
+    // const res = shell.exec('npm install');
+    // console.log('Exec install result: ', res);
 
-    console.log('will cd', tempRepoPath);
-    shell.cd(tempRepoPath);
-    console.log('did cd, will load');
+    // console.log('will cd', tempRepoPath);
+    // shell.cd(tempRepoPath);
+    // console.log('did cd, will load');
 
-    npm.load({ save: true }, error => {
+    const packagePromise = getFile(fileNames.package);
+    const packageLockPromise = getFile(fileNames.packageLock);
+    const [package, packageLock] = await Promise.all([packagePromise, packageLockPromise]);
+
+    data.translationDep = {
+      package: JSON.parse(package).dependencies[translationsRepoName],
+      packageLock: JSON.parse(packageLock).dependencies[translationsRepoName]
+    };
+
+    console.log('DATA: ', JSON.stringify(data), null, 2);
+
+    shell.cd('..');
+    resolve();
+
+    /* npm.load({ save: true }, error => {
       if (error) {
         console.log('load cb error: ', error);
         console.error(error);
@@ -133,7 +149,7 @@ const initRepoWithTranslations = () => {
         resolve();
       });
       console.log('something');
-    });
+    }); */
   });
 };
 
