@@ -93,7 +93,7 @@ const initRepoWithTranslations = () => {
     const { tempRepoPath } = data;
 
     try {
-      shell.cd('..');
+      // shell.cd('..');
       const absPath = path.resolve(cwd(), tempRepoPath);
       console.log('absPath', absPath);
       shell.mkdir(absPath);
