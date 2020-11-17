@@ -83,7 +83,7 @@ const fileNames = {
 };
 
 const initRepoWithTranslations = () => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     const { tempRepoPath } = data;
 
     console.log('initRepoWithTranslations');
