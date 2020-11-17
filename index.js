@@ -57,7 +57,7 @@ async function updateOnGitHub() {
     } catch (err) {
       console.error(err);
     }
-  });
+  }
 }
 
 async function gitClone(url, ref, dir) {
