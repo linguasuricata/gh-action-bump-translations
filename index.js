@@ -7,9 +7,11 @@ const path = require('path');
 const shell = require('shelljs');
 const { cwd } = require('process');
 
+const initCWD = null;
+
 const repos = [
   'lx-api-server',
-  /* 'lx-react-client' */
+  'lx-react-client'
 ];
 
 const translationsRepoName = '@surikat/lx-translations';
@@ -40,11 +42,13 @@ function updateOnGitHub() {
     const dir = gitData.dir;
 
     try {
-      console.log('#01 Current location: ', cwd());
-      shell.cd(dir);
-      console.log('#02 Current location: ', cwd());
-      return;
-
+      console.log('#1 Current location: ', cwd());
+      if (initCWD) {
+        shell.cd(initCWD);
+      } else {
+        initCWD = cwd();
+      }
+      console.log('#2 Current location: ', cwd());
       await gitClone(url, ref, dir);
       console.log('Cloned %s branch of %s.', ref, url);
       await initRepoWithTranslations();
@@ -102,7 +106,7 @@ const initRepoWithTranslations = () => {
       shell.exec(`npm config set '//registry.npmjs.org/:_authToken' "${process.env.NPM_TOKEN}"`);
       shell.exec(`npm install ${translationsRepoName} --save`);
 
-      console.log('#1 Current location: ', cwd());
+      console.log('#3 Current location: ', cwd());
 
       const packagePromise = getFile(fileNames.package);
       const packageLockPromise = getFile(fileNames.packageLock);
@@ -126,10 +130,10 @@ const initRepoWithTranslations = () => {
 };
 
 const updatePackageVersion = (dir) => new Promise((resolve, reject) => {
-  console.log('#2 Current location: ', cwd());
+  console.log('#3 Current location: ', cwd());
   shell.cd(dir);
   console.log('Changed directory to %s.', dir);
-  console.log('#3 Current location: ', cwd());
+  console.log('#4 Current location: ', cwd());
 
   npm.load({ save: true }, error => {
     if (error) {
