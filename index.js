@@ -86,40 +86,38 @@ const initRepoWithTranslations = () => {
   return new Promise(async (resolve, reject) => {
     const { tempRepoPath } = data;
 
-    console.log('initRepoWithTranslations');
-    shell.cd('..');
+    try {
+      console.log('initRepoWithTranslations');
+      shell.cd('..');
 
-    const absPath = path.resolve(cwd(), tempRepoPath);
-    console.log('absPath', absPath);
-    shell.mkdir(absPath);
-    shell.cd(absPath);
+      const absPath = path.resolve(cwd(), tempRepoPath);
+      console.log('absPath', absPath);
+      shell.mkdir(absPath);
+      shell.cd(absPath);
 
-    // const initFile = path.resolve(cwd(), '.npm-init');
-    // console.log('initFile', initFile);
+      shell.exec('npm init -y');
+      shell.exec('npm install');
+      console.log('Current location: ', cwd());
 
-    shell.exec('npm init -y');
-    shell.exec('npm install');
-    console.log('Current location: ', cwd());
-    // const res = shell.exec('npm install');
-    // console.log('Exec install result: ', res);
+      const packagePromise = getFile(fileNames.package);
+      const packageLockPromise = getFile(fileNames.packageLock);
+      const [package, packageLock] = await Promise.all([packagePromise, packageLockPromise]);
 
-    // console.log('will cd', tempRepoPath);
-    // shell.cd(tempRepoPath);
-    // console.log('did cd, will load');
+      console.log('Package Files: ', JSON.stringify({ package, packageLock }, null, 2));
 
-    const packagePromise = getFile(fileNames.package);
-    const packageLockPromise = getFile(fileNames.packageLock);
-    const [package, packageLock] = await Promise.all([packagePromise, packageLockPromise]);
+      data.translationDep = {
+        package: JSON.parse(package).dependencies[translationsRepoName],
+        packageLock: JSON.parse(packageLock).dependencies[translationsRepoName]
+      };
 
-    data.translationDep = {
-      package: JSON.parse(package).dependencies[translationsRepoName],
-      packageLock: JSON.parse(packageLock).dependencies[translationsRepoName]
-    };
+      console.log('DATA: ', JSON.stringify(data), null, 2);
 
-    console.log('DATA: ', JSON.stringify(data), null, 2);
-
-    shell.cd('..');
-    resolve();
+      shell.cd('..');
+      resolve();
+    } catch (error) {
+      console.log('ERROR: ', error.message);
+      reject(error);
+    }
 
     /* npm.load({ save: true }, error => {
       if (error) {
