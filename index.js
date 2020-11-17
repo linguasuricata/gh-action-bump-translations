@@ -43,7 +43,7 @@ function updateOnGitHub() {
     try {
       await gitClone(url, ref, dir);
       console.log('Cloned %s branch of %s.', ref, url);
-      await initRepoWithTranslations(dir);
+      await initRepoWithTranslations();
       await updatePackageVersion(dir);
       await gitAddAll(dir);
       await gitCommit(dir);
@@ -82,12 +82,13 @@ const fileNames = {
   packageLock: 'package-lock.json'
 };
 
-const initRepoWithTranslations = (dir) => {
+const initRepoWithTranslations = () => {
   return new Promise((resolve, reject) => {
     const { tempRepoPath } = data;
 
     console.log('initRepoWithTranslations');
-    const absPath = path.resolve(dir, tempRepoPath);
+    shell.cd('..');
+    const absPath = path.resolve(cwd(), tempRepoPath);
     console.log('absPath', absPath);
     const initFile = path.resolve(absPath, '.npm-init');
     console.log('initFile', initFile);
