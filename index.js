@@ -87,9 +87,7 @@ const initRepoWithTranslations = () => {
     const { tempRepoPath } = data;
 
     try {
-      console.log('initRepoWithTranslations');
       shell.cd('..');
-
       const absPath = path.resolve(cwd(), tempRepoPath);
       console.log('absPath', absPath);
       shell.mkdir(absPath);
@@ -98,7 +96,7 @@ const initRepoWithTranslations = () => {
       shell.exec('npm init -y');
       shell.exec('npm install');
       shell.exec(`npm config set '//registry.npmjs.org/:_authToken' "${process.env.NPM_TOKEN}"`);
-      shell.exec('npm install @surikat/lx-translations --save');
+      shell.exec(`npm install ${translationsRepoName} --save`);
 
       console.log('#1 Current location: ', cwd());
 
@@ -106,15 +104,13 @@ const initRepoWithTranslations = () => {
       const packageLockPromise = getFile(fileNames.packageLock);
       const [package, packageLock] = await Promise.all([packagePromise, packageLockPromise]);
 
-      const parsedPackage = JSON.parse(package.toString('utf8'));
-      const parsedPackageLock = JSON.parse(packageLock.toString('utf8'));
+      const parsedPackage = JSON.parse(package.toString());
+      const parsedPackageLock = JSON.parse(packageLock.toString());
 
       data.translationDep = {
         package: parsedPackage.dependencies[translationsRepoName],
         packageLock: parsedPackageLock.dependencies[translationsRepoName]
       };
-
-      console.log('DATA: ', JSON.stringify(data, null, 2));
 
       shell.cd('..');
       resolve();
@@ -126,9 +122,10 @@ const initRepoWithTranslations = () => {
 };
 
 const updatePackageVersion = (dir) => new Promise((resolve, reject) => {
-  // shell.cd(dir);
-  // console.log('Changed directory to %s.', dir);
   console.log('#2 Current location: ', cwd());
+  shell.cd(dir);
+  console.log('Changed directory to %s.', dir);
+  console.log('#3 Current location: ', cwd());
 
   npm.load({ save: true }, err => {
     if (err) {
@@ -156,7 +153,7 @@ function updateFile(fileName, translationDepData) {
   return new Promise(async (resolve, reject) => {
     try {
       const data = await getFile(fileName);
-      const parsedData = JSON.parse(data.toString('utf8'));
+      const parsedData = JSON.parse(data.toString());
       parsedData.dependencies[translationsRepoName] = translationDepData;
       const stringifiedData = JSON.stringify(parsedData, null, 2);
 
