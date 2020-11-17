@@ -97,6 +97,7 @@ const initRepoWithTranslations = () => {
 
       shell.exec('npm init -y');
       shell.exec('npm install');
+      shell.exec(`npm config set '//registry.npmjs.org/:_authToken' "${process.env.NPM_TOKEN}"`);
       const res = shell.exec('npm install @surikat/lx-translations --save');
       console.log('Exec RES: ', res);
       console.log('Current location: ', cwd());
