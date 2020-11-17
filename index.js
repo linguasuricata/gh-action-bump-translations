@@ -41,6 +41,7 @@ function updateOnGitHub() {
     const dir = gitData.dir;
 
     try {
+      console.log('#0 Current location: ', cwd());
       await gitClone(url, ref, dir);
       console.log('Cloned %s branch of %s.', ref, url);
       await initRepoWithTranslations();
