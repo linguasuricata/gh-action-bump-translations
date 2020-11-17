@@ -92,7 +92,7 @@ const initRepoWithTranslations = () => {
     console.log('absPath', absPath);
     shell.mkdir(absPath);
     shell.cd(absPath);
-    const initFile = path.resolve(absPath, '.npm-init');
+    const initFile = path.resolve(cwd(), '.npm-init');
     console.log('initFile', initFile);
 
     init(absPath, initFile, (err, data) => {
