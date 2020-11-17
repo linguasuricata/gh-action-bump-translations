@@ -97,6 +97,7 @@ const initRepoWithTranslations = () => {
 
       shell.exec('npm init -y');
       shell.exec('npm install');
+      shell.exec(`npm install ${translationsRepoName} --save`);
       console.log('Current location: ', cwd());
 
       const packagePromise = getFile(fileNames.package);
@@ -106,8 +107,8 @@ const initRepoWithTranslations = () => {
       console.log('Package Files: ', package.toString('utf8'), packageLock.toString('utf8'));
 
       data.translationDep = {
-        package: JSON.parse(package).dependencies[translationsRepoName],
-        packageLock: JSON.parse(packageLock).dependencies[translationsRepoName]
+        package: JSON.parse(package.toString('utf8')).dependencies[translationsRepoName],
+        packageLock: JSON.parse(packageLock.toString('utf8')).dependencies[translationsRepoName]
       };
 
       console.log('DATA: ', JSON.stringify(data), null, 2);
