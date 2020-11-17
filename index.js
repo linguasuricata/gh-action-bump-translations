@@ -9,8 +9,8 @@ const shell = require('shelljs');
 const { cwd } = require('process');
 
 const repos = [
-  'lx-api-server',
-  /* 'lx-react-client' */
+  /* 'lx-api-server', */
+  'lx-react-client'
 ];
 
 const translationsRepoName = '@surikat/lx-translations';
