@@ -96,47 +96,44 @@ const initRepoWithTranslations = () => {
 
     const initFile = path.resolve(cwd(), '.npm-init');
     console.log('initFile', initFile);
-    
-    const res = shell.exec('npm init -y');
-    console.log('-------------------- ', res);
 
-    init(cwd(), initFile, (err, data) => {
-      console.log('init', err, data);
-      
-      console.log('will cd', tempRepoPath);
-      shell.cd(tempRepoPath);
-      console.log('did cd, will load');
-      npm.load({ save: true }, error => {
-        console.log('load cb', error);
+    const res = shell.exec('npm init -y');
+    console.log('Exec result: ', res);
+    const res2 = shell.exec('npm install');
+    console.log('Exec result 2: ', res);
+
+    console.log('will cd', tempRepoPath);
+    shell.cd(tempRepoPath);
+    console.log('did cd, will load');
+    npm.load({ save: true }, error => {
+      console.log('load cb', error);
+      if (error) {
+        console.error(error);
+        return reject(error);
+      }
+
+      console.log('will install');
+      npm.commands.install([translationsRepoName], async error => {
         if (error) {
           console.error(error);
           return reject(error);
         }
+        console.log(`Successfully installed ${translationsRepoName}`);
 
-        console.log('will install');
-        npm.commands.install([translationsRepoName], async error => {
-          if (error) {
-            console.error(error);
-            return reject(error);
-          }
-          console.log(`Successfully installed ${translationsRepoName}`);
+        const packagePromise = getFile(fileNames.package);
+        const packageLockPromise = getFile(fileNames.packageLock);
+        const [package, packageLock] = await Promise.all([packagePromise, packageLockPromise]);
 
-          const packagePromise = getFile(fileNames.package);
-          const packageLockPromise = getFile(fileNames.packageLock);
-          const [package, packageLock] = await Promise.all([packagePromise, packageLockPromise]);
+        data.translationDep = {
+          package: JSON.parse(package).dependencies[translationsRepoName],
+          packageLock: JSON.parse(packageLock).dependencies[translationsRepoName]
+        };
 
-          data.translationDep = {
-            package: JSON.parse(package).dependencies[translationsRepoName],
-            packageLock: JSON.parse(packageLock).dependencies[translationsRepoName]
-          };
-
-          shell.cd('..');
-          resolve();
-        });
-        console.log('something');
+        shell.cd('..');
+        resolve();
       });
+      console.log('something');
     });
-
   });
 };
 
