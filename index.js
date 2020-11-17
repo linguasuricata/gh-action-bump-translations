@@ -97,21 +97,29 @@ const initRepoWithTranslations = () => {
 
       shell.exec('npm init -y');
       shell.exec('npm install');
-      shell.exec(`npm install ${translationsRepoName} --save`);
+      const res = shell.exec('npm install @surikat/lx-translations --save');
+      console.log('Exec RES: ', res);
       console.log('Current location: ', cwd());
 
       const packagePromise = getFile(fileNames.package);
       const packageLockPromise = getFile(fileNames.packageLock);
       const [package, packageLock] = await Promise.all([packagePromise, packageLockPromise]);
 
-      console.log('Package Files: ', package.toString('utf8'), packageLock.toString('utf8'));
+      const parsedPackage = JSON.parse(package.toString('utf8'));
+      const parsedPackageLock = JSON.parse(packageLock.toString('utf8'));
+
+      console.log('PARSED FILES: ', parsedPackage, parsedPackageLock);
+
+      if (!parsedPackage || !parsedPackageLock) {
+        throw new Error('Parsed package files are null');
+      }
 
       data.translationDep = {
-        package: JSON.parse(package.toString('utf8')).dependencies[translationsRepoName],
-        packageLock: JSON.parse(packageLock.toString('utf8')).dependencies[translationsRepoName]
+        package: parsedPackage.dependencies[translationsRepoName],
+        packageLock: parsedPackageLock.dependencies[translationsRepoName]
       };
 
-      console.log('DATA: ', JSON.stringify(data), null, 2);
+      // console.log('DATA: ', JSON.stringify(data), null, 2);
 
       shell.cd('..');
       resolve();
@@ -119,36 +127,6 @@ const initRepoWithTranslations = () => {
       console.log('ERROR: ', error.message);
       reject(error);
     }
-
-    /* npm.load({ save: true }, error => {
-      if (error) {
-        console.log('load cb error: ', error);
-        console.error(error);
-        return reject(error);
-      }
-
-      console.log('will install');
-      npm.commands.install([translationsRepoName], async error => {
-        if (error) {
-          console.error(error);
-          return reject(error);
-        }
-        console.log(`Successfully installed ${translationsRepoName}`);
-
-        const packagePromise = getFile(fileNames.package);
-        const packageLockPromise = getFile(fileNames.packageLock);
-        const [package, packageLock] = await Promise.all([packagePromise, packageLockPromise]);
-
-        data.translationDep = {
-          package: JSON.parse(package).dependencies[translationsRepoName],
-          packageLock: JSON.parse(packageLock).dependencies[translationsRepoName]
-        };
-
-        shell.cd('..');
-        resolve();
-      });
-      console.log('something');
-    }); */
   });
 };
 
@@ -171,7 +149,7 @@ const updatePackageVersion = (dir) => new Promise((resolve, reject) => {
 const getFile = fileName => new Promise((resolve, reject) => {
   fs.readFile(fileName, (error, data) => {
     if (error) {
-      console.error('getFile Error: ', error. message);
+      console.error('getFile Error: ', error.message);
       return reject(error);
     }
     resolve(data);
