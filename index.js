@@ -93,7 +93,7 @@ const initRepoWithTranslations = () => {
     const initFile = path.resolve(absPath, '.npm-init');
     console.log('initFile', initFile);
 
-    init(absPath, initFile, {}, (err, data) => {
+    init(absPath, initFile, (err, data) => {
       console.log('init', err, data);
       
       console.log('will cd', tempRepoPath);
