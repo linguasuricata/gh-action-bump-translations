@@ -98,8 +98,8 @@ const initRepoWithTranslations = () => {
       shell.exec('npm init -y');
       shell.exec('npm install');
       shell.exec(`npm config set '//registry.npmjs.org/:_authToken' "${process.env.NPM_TOKEN}"`);
-      const res = shell.exec('npm install @surikat/lx-translations --save');
-      console.log('Exec RES: ', res);
+      shell.exec('npm install @surikat/lx-translations --save');
+
       console.log('Current location: ', cwd());
 
       const packagePromise = getFile(fileNames.package);
@@ -109,18 +109,12 @@ const initRepoWithTranslations = () => {
       const parsedPackage = JSON.parse(package.toString('utf8'));
       const parsedPackageLock = JSON.parse(packageLock.toString('utf8'));
 
-      console.log('PARSED FILES: ', parsedPackage, parsedPackageLock);
-
-      if (!parsedPackage || !parsedPackageLock) {
-        throw new Error('Parsed package files are null');
-      }
-
       data.translationDep = {
         package: parsedPackage.dependencies[translationsRepoName],
         packageLock: parsedPackageLock.dependencies[translationsRepoName]
       };
 
-      // console.log('DATA: ', JSON.stringify(data), null, 2);
+      console.log('DATA: ', JSON.stringify(data), null, 2);
 
       shell.cd('..');
       resolve();
@@ -132,12 +126,12 @@ const initRepoWithTranslations = () => {
 };
 
 const updatePackageVersion = (dir) => new Promise((resolve, reject) => {
-  shell.cd(dir);
-  console.log('Changed directory to %s.', dir);
+  // shell.cd(dir);
+  // console.log('Changed directory to %s.', dir);
 
   npm.load({ save: true }, err => {
     if (err) {
-      console.error(err);
+      console.log('updatePackageVersion ERROR: ', err.message);
       return reject(err);
     }
     Promise.all([
@@ -161,7 +155,7 @@ function updateFile(fileName, translationDepData) {
   return new Promise(async (resolve, reject) => {
     try {
       const data = await getFile(fileName);
-      const parsedData = JSON.parse(data);
+      const parsedData = JSON.parse(data.toString('utf8'));
       parsedData.dependencies[translationsRepoName] = translationDepData;
       const stringifiedData = JSON.stringify(parsedData, null, 2);
 
