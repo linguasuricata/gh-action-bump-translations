@@ -103,7 +103,7 @@ const initRepoWithTranslations = () => {
       const packageLockPromise = getFile(fileNames.packageLock);
       const [package, packageLock] = await Promise.all([packagePromise, packageLockPromise]);
 
-      console.log('Package Files: ', package, packageLock);
+      console.log('Package Files: ', package.toString('utf8'), packageLock.toString('utf8'));
 
       data.translationDep = {
         package: JSON.parse(package).dependencies[translationsRepoName],
