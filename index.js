@@ -2,15 +2,14 @@ const { Toolkit } = require('actions-toolkit');
 const fs = require('fs');
 const git = require('isomorphic-git');
 const http = require('isomorphic-git/http/node');
-const init = require('init-package-json');
 const npm = require('npm');
 const path = require('path');
 const shell = require('shelljs');
 const { cwd } = require('process');
 
 const repos = [
-  /* 'lx-api-server', */
-  'lx-react-client'
+  'lx-api-server',
+  /* 'lx-react-client' */
 ];
 
 const translationsRepoName = '@surikat/lx-translations';
@@ -41,7 +40,11 @@ function updateOnGitHub() {
     const dir = gitData.dir;
 
     try {
-      console.log('#0 Current location: ', cwd());
+      console.log('#01 Current location: ', cwd());
+      shell.cd(dir);
+      console.log('#02 Current location: ', cwd());
+      return;
+
       await gitClone(url, ref, dir);
       console.log('Cloned %s branch of %s.', ref, url);
       await initRepoWithTranslations();
@@ -116,7 +119,7 @@ const initRepoWithTranslations = () => {
       shell.cd('..');
       resolve();
     } catch (error) {
-      console.log('ERROR: ', error.message);
+      console.log(error.message);
       reject(error);
     }
   });
@@ -128,10 +131,10 @@ const updatePackageVersion = (dir) => new Promise((resolve, reject) => {
   console.log('Changed directory to %s.', dir);
   console.log('#3 Current location: ', cwd());
 
-  npm.load({ save: true }, err => {
-    if (err) {
-      console.log('updatePackageVersion ERROR: ', err.message);
-      return reject(err);
+  npm.load({ save: true }, error => {
+    if (error) {
+      console.log(error.message);
+      return reject(error);
     }
     Promise.all([
       updateFile(fileNames.package, data.translationDep.package),
@@ -143,7 +146,7 @@ const updatePackageVersion = (dir) => new Promise((resolve, reject) => {
 const getFile = fileName => new Promise((resolve, reject) => {
   fs.readFile(fileName, (error, data) => {
     if (error) {
-      console.error('getFile Error: ', error.message);
+      console.error(error.message);
       return reject(error);
     }
     resolve(data);
@@ -156,9 +159,7 @@ function updateFile(fileName, translationDepData) {
       const data = await getFile(fileName);
       const parsedData = JSON.parse(data.toString());
       parsedData.dependencies[translationsRepoName] = translationDepData;
-      console.log('**** Dependenices path: ', parsedData.dependencies[translationsRepoName]);
       const stringifiedData = JSON.stringify(parsedData, null, 2);
-      console.log('**** File name: ', fileName);
 
       fs.writeFile(fileName, stringifiedData, error => {
         if (error) {
