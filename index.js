@@ -155,7 +155,9 @@ function updateFile(fileName, translationDepData) {
       const data = await getFile(fileName);
       const parsedData = JSON.parse(data.toString());
       parsedData.dependencies[translationsRepoName] = translationDepData;
+      console.log('**** updateFile Parsed Data: ', parsedData);
       const stringifiedData = JSON.stringify(parsedData, null, 2);
+      console.log('**** File name: ', fileName);
 
       fs.writeFile(fileName, stringifiedData, error => {
         if (error) {
