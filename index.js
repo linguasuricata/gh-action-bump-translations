@@ -87,7 +87,7 @@ const initRepoWithTranslations = () => {
     const { tempRepoPath } = data;
 
     try {
-      shell.cd('..');
+      shell.cd('..'); // TODO
       const absPath = path.resolve(cwd(), tempRepoPath);
       console.log('absPath', absPath);
       shell.mkdir(absPath);
@@ -155,7 +155,7 @@ function updateFile(fileName, translationDepData) {
       const data = await getFile(fileName);
       const parsedData = JSON.parse(data.toString());
       parsedData.dependencies[translationsRepoName] = translationDepData;
-      console.log('**** updateFile Parsed Data: ', parsedData);
+      console.log('**** Dependenices path: ', parsedData.dependencies[translationsRepoName]);
       const stringifiedData = JSON.stringify(parsedData, null, 2);
       console.log('**** File name: ', fileName);
 
