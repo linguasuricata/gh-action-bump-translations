@@ -43,8 +43,9 @@ async function updateOnGitHub() {
 
     try {
       console.log('#1 Current location: ', cwd());
-      const p = path.resolve(dir, 'work/lx-translations');
-      shell.cd(p);
+      shell.cd(dir);
+      shell.cd('./work');
+      shell.cd('./lx-translations');
       console.log('#2 Current location: ', cwd());
       await gitClone(url, ref, dir);
       console.log('Cloned %s branch of %s.', ref, url);
