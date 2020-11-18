@@ -38,20 +38,17 @@ async function updateOnGitHub() {
     const url = `https://github.com/surikaterna/${repo}`;
     const ref = gitData.ref;
     const dir = gitData.dir;
-    // console.log('--- DIR: ', dir);
 
     try {
-      // console.log('#1 Current location: ', cwd());
+      console.log('Current location: ', cwd());
+
       shell.cd(dir);
       shell.cd('./work');
       shell.cd('./lx-translations');
 
-      // TODO
       const repoPath = path.resolve(cwd(), repo);
-      console.log('----- repoPath', repoPath);
       shell.mkdir(repoPath);
       shell.cd(repoPath);
-      // console.log('#2 Current location: ', cwd());
 
       await gitClone(url, ref, cwd()); // dir
       console.log('Cloned %s branch of %s.', ref, url);
@@ -60,21 +57,11 @@ async function updateOnGitHub() {
       await gitAddAll(cwd()); // dir
       await gitCommit(cwd()); // dir
       await gitPush(ref, cwd()); // dir
-      // await gitDeleteRemote(dir);
       console.log('Successfully pushed the %s branch of %s.', ref, url);
     } catch (error) {
       console.error(error.message);
     }
   }
-}
-
-async function gitDeleteRemote(dir) {
-  console.log(`--- Will Delete Remote\nDir: ${dir}`);
-  await git.deleteRemote({
-    fs,
-    dir,
-    remote: 'origin'
-  });
 }
 
 async function gitClone(url, ref, dir) {
@@ -87,8 +74,7 @@ async function gitClone(url, ref, dir) {
     corsProxy: 'https://cors.isomorphic-git.org',
     onAuth,
     singleBranch: true,
-    depth: 1,
-    // force: true
+    depth: 1
   });
 }
 
@@ -110,9 +96,7 @@ const initRepoWithTranslations = () => {
     const { tempRepoPath } = data;
 
     try {
-      // shell.cd('..');
       const absPath = path.resolve(cwd(), tempRepoPath);
-      console.log('absPath', absPath);
       shell.mkdir(absPath);
       shell.cd(absPath);
 
@@ -121,7 +105,6 @@ const initRepoWithTranslations = () => {
       shell.exec(`npm config set '//registry.npmjs.org/:_authToken' "${process.env.NPM_TOKEN}"`);
       shell.exec(`npm install ${translationsRepoName} --save`);
 
-      // console.log('#3 Current location: ', cwd());
       const packagePromise = getFile(fileNames.package);
       const packageLockPromise = getFile(fileNames.packageLock);
       const [package, packageLock] = await Promise.all([packagePromise, packageLockPromise]);
@@ -134,7 +117,6 @@ const initRepoWithTranslations = () => {
         packageLock: parsedPackageLock.dependencies[translationsRepoName]
       };
 
-      // shell.cd('..'); // TODO
       shell.cd('..');
       resolve();
     } catch (error) {
@@ -145,13 +127,7 @@ const initRepoWithTranslations = () => {
 };
 
 const updatePackageVersion = (dir) => new Promise((resolve, reject) => {
-  // console.log('#4 Current location: ', cwd());
-
-  shell.cd(dir);
-
-  // console.log('Changed directory to %s.', dir);
-  console.log('#5 Current location: ', cwd());
-
+  // shell.cd(dir);
   npm.load({ save: true }, error => {
     if (error) {
       console.log(error.message);
@@ -212,7 +188,6 @@ async function gitAddAll(dir) {
 
 async function gitCommit(dir) {
   const { message } = gitData;
-  console.log(`--- Will commit\nDir: ${dir}\nMessage: ${message}`);
   await git.commit({
     fs,
     dir,
@@ -222,7 +197,6 @@ async function gitCommit(dir) {
 }
 
 async function gitPush(ref, dir) {
-  console.log(`--- Will push\nRef: ${ref}\nDir: ${dir}`);
   await git.push({
     fs,
     http,
