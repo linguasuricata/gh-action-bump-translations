@@ -45,22 +45,22 @@ async function updateOnGitHub() {
       shell.cd(dir);
       shell.cd('./work');
       shell.cd('./lx-translations');
-      
+
       // TODO
       const repoPath = path.resolve(cwd(), repo);
       console.log('----- repoPath', repoPath);
       shell.mkdir(repoPath);
       shell.cd(repoPath);
       // console.log('#2 Current location: ', cwd());
-      
-      await gitClone(url, ref, dir);
+
+      await gitClone(url, ref, cwd()); // dir
       console.log('Cloned %s branch of %s.', ref, url);
       await initRepoWithTranslations();
-      await updatePackageVersion(dir);
-      await gitAddAll(dir);
-      await gitCommit(dir);
-      await gitPush(ref, dir);
-      await gitDeleteRemote(dir);
+      await updatePackageVersion(cwd()); // dir
+      await gitAddAll(cwd()); // dir
+      await gitCommit(cwd()); // dir
+      await gitPush(ref, cwd()); // dir
+      // await gitDeleteRemote(dir);
       console.log('Successfully pushed the %s branch of %s.', ref, url);
     } catch (error) {
       console.error(error.message);
@@ -120,7 +120,7 @@ const initRepoWithTranslations = () => {
       shell.exec('npm install');
       shell.exec(`npm config set '//registry.npmjs.org/:_authToken' "${process.env.NPM_TOKEN}"`);
       shell.exec(`npm install ${translationsRepoName} --save`);
-      
+
       // console.log('#3 Current location: ', cwd());
       const packagePromise = getFile(fileNames.package);
       const packageLockPromise = getFile(fileNames.packageLock);
@@ -134,7 +134,7 @@ const initRepoWithTranslations = () => {
         packageLock: parsedPackageLock.dependencies[translationsRepoName]
       };
 
-      shell.cd('..'); // TODO
+      // shell.cd('..'); // TODO
       shell.cd('..');
       resolve();
     } catch (error) {
