@@ -45,11 +45,14 @@ async function updateOnGitHub() {
       shell.cd(dir);
       shell.cd('./work');
       shell.cd('./lx-translations');
-      // const repoPath = path.resolve(cwd(), repo);
-      // console.log('----- repoPath', repoPath);
-      // shell.mkdir(repoPath);
-      // shell.cd(repoPath);
+      
+      // TODO
+      const repoPath = path.resolve(cwd(), repo);
+      console.log('----- repoPath', repoPath);
+      shell.mkdir(repoPath);
+      shell.cd(repoPath);
       // console.log('#2 Current location: ', cwd());
+      
       await gitClone(url, ref, dir);
       console.log('Cloned %s branch of %s.', ref, url);
       await initRepoWithTranslations();
@@ -131,6 +134,7 @@ const initRepoWithTranslations = () => {
         packageLock: parsedPackageLock.dependencies[translationsRepoName]
       };
 
+      shell.cd('..'); // TODO
       shell.cd('..');
       resolve();
     } catch (error) {
