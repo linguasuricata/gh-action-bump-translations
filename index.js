@@ -41,6 +41,7 @@ async function updateOnGitHub() {
 
     try {
       console.log('Current location: ', cwd());
+      console.log('TEST path resolve: ', path.resolve(cwd(), repo));
 
       shell.cd(dir);
       shell.cd('./work');
