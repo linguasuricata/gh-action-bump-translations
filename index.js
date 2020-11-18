@@ -45,6 +45,7 @@ async function updateOnGitHub() {
       shell.cd(dir);
       shell.cd('./work');
       shell.cd('./lx-translations');
+      shell.cd(`./${repo}`);
       // console.log('#2 Current location: ', cwd());
       await gitClone(url, ref, dir);
       console.log('Cloned %s branch of %s.', ref, url);
@@ -53,7 +54,7 @@ async function updateOnGitHub() {
       await gitAddAll(dir);
       await gitCommit(dir);
       await gitPush(ref, dir);
-      await gitDeleteRemote(dir);
+      // await gitDeleteRemote(dir);
       console.log('Successfully pushed the %s branch of %s.', ref, url);
     } catch (error) {
       console.error(error.message);
@@ -139,7 +140,9 @@ const initRepoWithTranslations = () => {
 
 const updatePackageVersion = (dir) => new Promise((resolve, reject) => {
   // console.log('#4 Current location: ', cwd());
-  shell.cd(dir);
+
+  // shell.cd(dir);
+
   // console.log('Changed directory to %s.', dir);
   // console.log('#5 Current location: ', cwd());
 
