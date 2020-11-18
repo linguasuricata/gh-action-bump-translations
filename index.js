@@ -40,25 +40,17 @@ async function updateOnGitHub() {
     // const dir = gitData.dir;
 
     try {
-      console.log('Current location: ', cwd());
-      console.log('TEST path resolve: ', path.resolve(cwd(), `../${repo}`));
-
-      /*shell.cd(dir);
-      shell.cd('./work');
-      shell.cd('./lx-translations');*/
-
-      // const repoPath = path.resolve(cwd(), repo);
       const repoPath = path.resolve(cwd(), `../${repo}`);
       shell.mkdir(repoPath);
       shell.cd(repoPath);
 
-      await gitClone(url, ref, cwd()); // dir
+      await gitClone(url, ref);
       console.log('Cloned %s branch of %s.', ref, url);
       await initRepoWithTranslations();
-      await updatePackageVersion(cwd()); // dir
-      await gitAddAll(cwd()); // dir
-      await gitCommit(cwd()); // dir
-      await gitPush(ref, cwd()); // dir
+      await updatePackageVersion();
+      await gitAddAll();
+      await gitCommit();
+      await gitPush(ref);
       console.log('Successfully pushed the %s branch of %s.', ref, url);
     } catch (error) {
       console.error(error.message);
@@ -66,11 +58,11 @@ async function updateOnGitHub() {
   }
 }
 
-async function gitClone(url, ref, dir) {
+async function gitClone(url, ref) {
   await git.clone({
     fs,
     http,
-    dir,
+    dir: cwd(),
     url,
     ref,
     corsProxy: 'https://cors.isomorphic-git.org',
@@ -98,10 +90,9 @@ const initRepoWithTranslations = () => {
     const { tempRepoPath } = data;
 
     try {
-      const absPath = path.resolve(cwd(), tempRepoPath);
-      shell.mkdir(absPath);
-      shell.cd(absPath);
-
+      const path = path.resolve(cwd(), tempRepoPath);
+      shell.mkdir(path);
+      shell.cd(path);
       shell.exec('npm init -y');
       shell.exec('npm install');
       shell.exec(`npm config set '//registry.npmjs.org/:_authToken' "${process.env.NPM_TOKEN}"`);
@@ -128,8 +119,7 @@ const initRepoWithTranslations = () => {
   });
 };
 
-const updatePackageVersion = (dir) => new Promise((resolve, reject) => {
-  // shell.cd(dir);
+const updatePackageVersion = () => new Promise((resolve, reject) => {
   npm.load({ save: true }, error => {
     if (error) {
       console.log(error.message);
@@ -173,10 +163,10 @@ function updateFile(fileName, translationDepData) {
   });
 }
 
-async function gitAddAll(dir) {
+async function gitAddAll() {
   const repo = {
     fs,
-    dir
+    dir: cwd()
   };
 
   const status = await git.statusMatrix(repo);
@@ -188,21 +178,21 @@ async function gitAddAll(dir) {
   ));
 }
 
-async function gitCommit(dir) {
+async function gitCommit() {
   const { message } = gitData;
   await git.commit({
     fs,
-    dir,
+    dir: cwd(),
     author: { name: 'Bump Translations Action' },
     message
   });
 }
 
-async function gitPush(ref, dir) {
+async function gitPush(ref) {
   await git.push({
     fs,
     http,
-    dir,
+    dir: cwd(),
     remote: 'origin',
     ref,
     onAuth
