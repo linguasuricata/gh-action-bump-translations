@@ -133,6 +133,7 @@ const initRepoWithTranslations = () => {
       };
 
       shell.cd('..');
+      shell.cd('..');
       resolve();
     } catch (error) {
       console.log(error.message);
