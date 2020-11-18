@@ -7,8 +7,6 @@ const path = require('path');
 const shell = require('shelljs');
 const { cwd } = require('process');
 
-let initCWD = null;
-
 const repos = [
   'lx-api-server',
   'lx-react-client'
@@ -40,6 +38,7 @@ async function updateOnGitHub() {
     const url = `https://github.com/surikaterna/${repo}`;
     const ref = gitData.ref;
     const dir = gitData.dir;
+    console.log('--- DIR: ', dir);
 
     try {
       console.log('#1 Current location: ', cwd());
@@ -54,11 +53,17 @@ async function updateOnGitHub() {
       await gitAddAll(dir);
       await gitCommit(dir);
       await gitPush(ref, dir);
+      // TODO ...
+      // await gitDeleteRemote();
       console.log('Successfully pushed the %s branch of %s.', ref, url);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error.message);
     }
   }
+}
+
+async function gitDeleteRemote() {
+
 }
 
 async function gitClone(url, ref, dir) {
@@ -71,8 +76,11 @@ async function gitClone(url, ref, dir) {
     corsProxy: 'https://cors.isomorphic-git.org',
     onAuth,
     singleBranch: true,
-    depth: 1
+    depth: 1,
+    force: true
   });
+
+  git.clone
 }
 
 const data = {
