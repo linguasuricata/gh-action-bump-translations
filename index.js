@@ -38,14 +38,14 @@ async function updateOnGitHub() {
     const url = `https://github.com/surikaterna/${repo}`;
     const ref = gitData.ref;
     const dir = gitData.dir;
-    console.log('--- DIR: ', dir);
+    // console.log('--- DIR: ', dir);
 
     try {
-      console.log('#1 Current location: ', cwd());
+      // console.log('#1 Current location: ', cwd());
       shell.cd(dir);
       shell.cd('./work');
       shell.cd('./lx-translations');
-      console.log('#2 Current location: ', cwd());
+      // console.log('#2 Current location: ', cwd());
       await gitClone(url, ref, dir);
       console.log('Cloned %s branch of %s.', ref, url);
       await initRepoWithTranslations();
@@ -62,6 +62,7 @@ async function updateOnGitHub() {
 }
 
 async function gitDeleteRemote(dir) {
+  console.log(`--- Will Delete Remote\nDir: ${dir}`);
   await git.deleteRemote({
     fs,
     dir,
@@ -113,7 +114,7 @@ const initRepoWithTranslations = () => {
       shell.exec(`npm config set '//registry.npmjs.org/:_authToken' "${process.env.NPM_TOKEN}"`);
       shell.exec(`npm install ${translationsRepoName} --save`);
 
-      console.log('#3 Current location: ', cwd());
+      // console.log('#3 Current location: ', cwd());
 
       const packagePromise = getFile(fileNames.package);
       const packageLockPromise = getFile(fileNames.packageLock);
@@ -137,10 +138,10 @@ const initRepoWithTranslations = () => {
 };
 
 const updatePackageVersion = (dir) => new Promise((resolve, reject) => {
-  console.log('#4 Current location: ', cwd());
+  // console.log('#4 Current location: ', cwd());
   shell.cd(dir);
-  console.log('Changed directory to %s.', dir);
-  console.log('#5 Current location: ', cwd());
+  // console.log('Changed directory to %s.', dir);
+  // console.log('#5 Current location: ', cwd());
 
   npm.load({ save: true }, error => {
     if (error) {
@@ -202,7 +203,7 @@ async function gitAddAll(dir) {
 
 async function gitCommit(dir) {
   const { message } = gitData;
-
+  console.log(`--- Will commit\nDir: ${dir}\nMessage: ${message}`);
   await git.commit({
     fs,
     dir,
@@ -212,6 +213,7 @@ async function gitCommit(dir) {
 }
 
 async function gitPush(ref, dir) {
+  console.log(`--- Will push\nRef: ${ref}\nDir: ${dir}`);
   await git.push({
     fs,
     http,
