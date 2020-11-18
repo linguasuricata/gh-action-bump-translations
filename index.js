@@ -45,7 +45,10 @@ async function updateOnGitHub() {
       shell.cd(dir);
       shell.cd('./work');
       shell.cd('./lx-translations');
-      shell.cd(`./${repo}`);
+      const repoPath = path.resolve(cwd(), repo);
+      console.log('----- repoPath', repoPath);
+      shell.mkdir(repoPath);
+      shell.cd(repoPath);
       // console.log('#2 Current location: ', cwd());
       await gitClone(url, ref, dir);
       console.log('Cloned %s branch of %s.', ref, url);
