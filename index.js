@@ -53,8 +53,7 @@ async function updateOnGitHub() {
       await gitAddAll(dir);
       await gitCommit(dir);
       await gitPush(ref, dir);
-      // TODO ...
-      // await gitDeleteRemote();
+      await gitDeleteRemote(dir);
       console.log('Successfully pushed the %s branch of %s.', ref, url);
     } catch (error) {
       console.error(error.message);
@@ -62,8 +61,12 @@ async function updateOnGitHub() {
   }
 }
 
-async function gitDeleteRemote() {
-
+async function gitDeleteRemote(dir) {
+  await git.deleteRemote({
+    fs,
+    dir,
+    remote: 'origin'
+  });
 }
 
 async function gitClone(url, ref, dir) {
@@ -77,7 +80,7 @@ async function gitClone(url, ref, dir) {
     onAuth,
     singleBranch: true,
     depth: 1,
-    force: true
+    // force: true
   });
 }
 
