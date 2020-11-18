@@ -45,10 +45,10 @@ async function updateOnGitHub() {
       shell.cd(dir);
       shell.cd('./work');
       shell.cd('./lx-translations');
-      const repoPath = path.resolve(cwd(), repo);
-      console.log('----- repoPath', repoPath);
-      shell.mkdir(repoPath);
-      shell.cd(repoPath);
+      // const repoPath = path.resolve(cwd(), repo);
+      // console.log('----- repoPath', repoPath);
+      // shell.mkdir(repoPath);
+      // shell.cd(repoPath);
       // console.log('#2 Current location: ', cwd());
       await gitClone(url, ref, dir);
       console.log('Cloned %s branch of %s.', ref, url);
@@ -57,7 +57,7 @@ async function updateOnGitHub() {
       await gitAddAll(dir);
       await gitCommit(dir);
       await gitPush(ref, dir);
-      // await gitDeleteRemote(dir);
+      await gitDeleteRemote(dir);
       console.log('Successfully pushed the %s branch of %s.', ref, url);
     } catch (error) {
       console.error(error.message);
@@ -119,8 +119,8 @@ const initRepoWithTranslations = () => {
       shell.exec(`npm install ${translationsRepoName} --save`);
 
       
+      // console.log('#3 Current location: ', cwd());
       const packagePromise = getFile(fileNames.package);
-      console.log('#3 Current location: ', cwd());
       const packageLockPromise = getFile(fileNames.packageLock);
       const [package, packageLock] = await Promise.all([packagePromise, packageLockPromise]);
 
