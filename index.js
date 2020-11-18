@@ -146,7 +146,7 @@ const updatePackageVersion = (dir) => new Promise((resolve, reject) => {
   shell.cd(dir);
 
   // console.log('Changed directory to %s.', dir);
-  // console.log('#5 Current location: ', cwd());
+  console.log('#5 Current location: ', cwd());
 
   npm.load({ save: true }, error => {
     if (error) {
