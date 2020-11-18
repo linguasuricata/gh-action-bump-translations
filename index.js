@@ -143,7 +143,7 @@ const initRepoWithTranslations = () => {
 const updatePackageVersion = (dir) => new Promise((resolve, reject) => {
   // console.log('#4 Current location: ', cwd());
 
-  // shell.cd(dir);
+  shell.cd(dir);
 
   // console.log('Changed directory to %s.', dir);
   // console.log('#5 Current location: ', cwd());
