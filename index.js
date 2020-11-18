@@ -118,9 +118,9 @@ const initRepoWithTranslations = () => {
       shell.exec(`npm config set '//registry.npmjs.org/:_authToken' "${process.env.NPM_TOKEN}"`);
       shell.exec(`npm install ${translationsRepoName} --save`);
 
-      // console.log('#3 Current location: ', cwd());
-
+      
       const packagePromise = getFile(fileNames.package);
+      console.log('#3 Current location: ', cwd());
       const packageLockPromise = getFile(fileNames.packageLock);
       const [package, packageLock] = await Promise.all([packagePromise, packageLockPromise]);
 
