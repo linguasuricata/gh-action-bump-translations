@@ -37,12 +37,11 @@ async function updateOnGitHub() {
   for (const repo of gitData.repos) {
     const url = `https://github.com/surikaterna/${repo}`;
     const ref = gitData.ref;
-    // const dir = gitData.dir;
 
     try {
-      const repoPath = path.resolve(cwd(), `../${repo}`);
-      shell.mkdir(repoPath);
-      shell.cd(repoPath);
+      const newPath = path.resolve(cwd(), `../${repo}`);
+      shell.mkdir(newPath);
+      shell.cd(newPath);
 
       await gitClone(url, ref);
       console.log('Cloned %s branch of %s.', ref, url);
@@ -90,9 +89,9 @@ const initRepoWithTranslations = () => {
     const { tempRepoPath } = data;
 
     try {
-      const path = path.resolve(cwd(), tempRepoPath);
-      shell.mkdir(path);
-      shell.cd(path);
+      const newPath = path.resolve(cwd(), tempRepoPath);
+      shell.mkdir(newPath);
+      shell.cd(newPath);
       shell.exec('npm init -y');
       shell.exec('npm install');
       shell.exec(`npm config set '//registry.npmjs.org/:_authToken' "${process.env.NPM_TOKEN}"`);
