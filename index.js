@@ -37,17 +37,18 @@ async function updateOnGitHub() {
   for (const repo of gitData.repos) {
     const url = `https://github.com/surikaterna/${repo}`;
     const ref = gitData.ref;
-    const dir = gitData.dir;
+    // const dir = gitData.dir;
 
     try {
       console.log('Current location: ', cwd());
       console.log('TEST path resolve: ', path.resolve(cwd(), `../${repo}`));
 
-      shell.cd(dir);
+      /*shell.cd(dir);
       shell.cd('./work');
-      shell.cd('./lx-translations');
+      shell.cd('./lx-translations');*/
 
-      const repoPath = path.resolve(cwd(), repo);
+      // const repoPath = path.resolve(cwd(), repo);
+      const repoPath = path.resolve(cwd(), `../${repo}`);
       shell.mkdir(repoPath);
       shell.cd(repoPath);
 
