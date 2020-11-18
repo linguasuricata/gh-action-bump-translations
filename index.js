@@ -79,8 +79,6 @@ async function gitClone(url, ref, dir) {
     depth: 1,
     force: true
   });
-
-  git.clone
 }
 
 const data = {
